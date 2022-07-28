@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product_model.dart';
+import 'package:shop_app/screens/product_detail_screen.dart';
 
 class ProductItemWidget extends StatelessWidget {
   final ProductModel product;
@@ -24,7 +25,10 @@ class ProductItemWidget extends StatelessWidget {
             icon: const Icon(Icons.shopping_cart),
           ),
         ),
-        child: Image.network(product.imageUrl, fit: BoxFit.cover,),
+        child: InkWell(
+          onTap: () => Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: product.id),
+          child: Image.network(product.imageUrl, fit: BoxFit.cover,),
+        ),
       ),
     );
   }
