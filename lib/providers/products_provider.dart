@@ -42,9 +42,16 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
-  List<ProductModel> get products => [..._products];
+  List<ProductModel> get products {
+    return [..._products];
+  }
 
+  List<ProductModel> get favorites {
+    return _products.where((element) => element.isFavorite).toList();
+  }
   ProductModel productById(String id) => _products.firstWhere((element) => element.id == id);
+
+
 
   void addProduct(ProductModel newProduct) {
     _products.add(newProduct);
