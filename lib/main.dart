@@ -19,8 +19,8 @@ class MyApp extends StatelessWidget {
         fontFamily: "Lato"
     );
     
-    return ChangeNotifierProvider(
-      create: (context) => ProductsProvider(),
+    return ChangeNotifierProvider.value(
+      value: ProductsProvider(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: theme,
