@@ -9,11 +9,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = ThemeData(
+        primarySwatch: Colors.blue,
+        colorScheme: const ColorScheme.light().copyWith(secondary: Colors.redAccent),
+        fontFamily: "Lato"
+    );
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: theme,
       home: const HomePage(),
     );
   }
