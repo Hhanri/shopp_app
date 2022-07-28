@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/providers/products_provider.dart';
+import 'package:shop_app/providers/cart_provider.dart';
+import 'package:shop_app/widgets/badge_widget.dart';
 import 'package:shop_app/widgets/products_grid_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -18,7 +19,6 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productsProvider = context.read<ProductsProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("My Shop"),
@@ -39,6 +39,15 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 const PopupMenuItem(value: FilterOptions.all, child: Text("All"))
               ];
             },
+          ),
+          Consumer<CartProvider>(
+            builder: (context, cart, child) {
+              return BadgeWidget(
+                value: cart.itemCount.toString(),
+                child: child!,
+              );
+            },
+            child: IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
           )
         ],
       ),
