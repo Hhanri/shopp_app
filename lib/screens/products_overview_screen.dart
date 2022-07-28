@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/cart_provider.dart';
+import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/widgets/badge_widget.dart';
 import 'package:shop_app/widgets/products_grid_widget.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +9,8 @@ enum FilterOptions {favorites, all}
 
 class ProductsOverviewScreen extends StatefulWidget {
   const ProductsOverviewScreen({Key? key}) : super(key: key);
+
+  static const String routeName = '/overview';
 
   @override
   State<ProductsOverviewScreen> createState() => _ProductsOverviewScreenState();
@@ -47,7 +50,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 child: child!,
               );
             },
-            child: IconButton(onPressed: () {}, icon: const Icon(Icons.shopping_cart)),
+            child: IconButton(onPressed: () => Navigator.of(context).pushNamed(CartScreen.routeName), icon: const Icon(Icons.shopping_cart)),
           )
         ],
       ),
