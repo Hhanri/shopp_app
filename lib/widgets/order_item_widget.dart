@@ -1,10 +1,26 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/order_model.dart';
 import 'package:intl/intl.dart';
 
-class OrderItemWidget extends StatelessWidget {
+class OrderItemWidget extends StatefulWidget {
   final OrderModel order;
   const OrderItemWidget({Key? key, required this.order}) : super(key: key);
+
+  @override
+  State<OrderItemWidget> createState() => _OrderItemWidgetState();
+}
+
+class _OrderItemWidgetState extends State<OrderItemWidget> {
+
+  bool isExpanded = false;
+
+  void toggleExpanded() {
+    setState(() {
+      isExpanded = !isExpanded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,13 +29,42 @@ class OrderItemWidget extends StatelessWidget {
       child: Column(
         children: [
           ListTile(
-            title: Text('\$${order.amount}'),
-            subtitle: Text(DateFormat('dd MM yyyy hh:mm').format(order.date)),
+            title: Text('\$${widget.order.amount}'),
+            subtitle: Text(DateFormat('dd MM yyyy hh:mm').format(widget.order.date)),
             trailing: IconButton(
-              onPressed: () {},
+              onPressed: toggleExpanded,
               icon: const Icon(Icons.expand_more)
             ),
           ),
+          if (isExpanded)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              height: min(widget.order.products.length * 20.0 + 10, 130),
+              child: ListView.builder(
+                itemCount: widget.order.products.length,
+                itemBuilder: (context, index) {
+                  final currentItem = widget.order.products[index];
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        currentItem.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      Text(
+                        '${currentItem.quantity}x \$${currentItem.price}',
+                        style: TextStyle(
+                          fontSize: 18
+                        ),
+                      )
+                    ],
+                  );
+                },
+              ),
+            )
         ],
       ),
     );
