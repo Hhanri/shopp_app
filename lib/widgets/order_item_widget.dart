@@ -49,14 +49,14 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     children: [
                       Text(
                         currentItem.title,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold
                         ),
                       ),
                       Text(
                         '${currentItem.quantity}x \$${currentItem.price}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 18
                         ),
                       )
