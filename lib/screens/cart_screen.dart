@@ -36,11 +36,12 @@ class CartScreen extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: cartProvider.cartItems.length,
               itemBuilder: (context, index) {
+                final currentCartItem = cartProvider.cartItems.values.toList()[index];
                 return CartItemWidget(
-                id: cartProvider.cartItems.values.toList()[index].id,
-                price: cartProvider.cartItems.values.toList()[index].price,
-                quantity: cartProvider.cartItems.values.toList()[index].quantity,
-                title: cartProvider.cartItems.values.toList()[index].title
+                id: currentCartItem.id,
+                price: currentCartItem.price,
+                quantity: currentCartItem.quantity,
+                title: currentCartItem.title
                 );
               },
             )
