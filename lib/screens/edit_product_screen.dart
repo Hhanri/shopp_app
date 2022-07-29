@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product_model.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/providers/products_provider.dart';
 
 class EditProductScreen extends StatefulWidget {
   const EditProductScreen({Key? key}) : super(key: key);
@@ -11,6 +13,8 @@ class EditProductScreen extends StatefulWidget {
 }
 
 class _EditProductScreenState extends State<EditProductScreen> {
+
+  bool _isInit = true;
 
   ProductModel editedProduct = ProductModel(id: '', title: '', description: '', price: 0, imageUrl: '', isFavorite: false);
 
@@ -24,6 +28,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void focus(FocusNode newNode) => FocusScope.of(context).requestFocus(newNode);
 
+  var _initValues = {
+    'title': '',
+    'price': '',
+    'description': '',
+    'imageUrl': ''
+  };
+
   void updateUrl() {
     if (!imageFocusNode.hasFocus) {
       setState(() {});
@@ -33,6 +44,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void  saveForm() {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
+      if  (editedProduct.id != '') {
+        context.read<ProductsProvider>().updateProduct(id: editedProduct.id, product: editedProduct);
+      } else {
+        context.read<ProductsProvider>().addProduct(editedProduct);
+      }
+      Navigator.of(context).pop();
     }
   }
 
@@ -41,6 +58,25 @@ class _EditProductScreenState extends State<EditProductScreen> {
     imageFocusNode.addListener(() {updateUrl();});
     super.initState();
   }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final String? productId = ModalRoute.of(context)!.settings.arguments as String?;
+      if (productId != null) {
+        editedProduct = context.read<ProductsProvider>().productById(productId);
+        imageController.text = editedProduct.imageUrl;
+        _initValues = {
+          'title': editedProduct.title,
+          'price': editedProduct.price.toString(),
+          'description': editedProduct.description,
+        };
+      }
+    }
+     _isInit = false;
+    super.didChangeDependencies();
+  }
+
   @override
   void dispose() {
     imageController.dispose();
@@ -71,6 +107,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
             children: [
               TextFormField(
                 focusNode: titleFocusNode,
+                initialValue: _initValues['title'],
                 decoration: const InputDecoration(
                   labelText: "Title",
                 ),
@@ -93,6 +130,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ),
               TextFormField(
                 focusNode: priceFocusNode,
+                initialValue: _initValues['price'],
                 decoration: const InputDecoration(
                   labelText: "Price",
                 ),
@@ -117,6 +155,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
               ),
               TextFormField(
                 focusNode: priceFocusNode,
+                initialValue: _initValues['description'],
                 decoration: const InputDecoration(
                   labelText: "Description",
                 ),
