@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/cart_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/widgets/cart_item_widget.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -11,24 +12,40 @@ class CartScreen extends StatelessWidget {
     final cartProvider = context.watch<CartProvider>();
     return Scaffold(
       appBar: AppBar(title: const Text("Cart"),),
-      body: Column(
-        children: [
-          Card(
-            margin: const EdgeInsets.all(16),
-            child: Padding(
-              padding: const EdgeInsets.all(18),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children:[
-                  const Text("Total"),
-                  const SizedBox(width: 10,),
-                  Chip(label: Text("\$ ${cartProvider.totalAmount}")),
-                  TextButton(onPressed: () {}, child: const Text("Order"))
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children:[
+                    const Text("Total"),
+                    const SizedBox(width: 10,),
+                    Chip(label: Text("\$ ${cartProvider.totalAmount}")),
+                    TextButton(onPressed: () {}, child: const Text("Order"))
+                  ],
+                ),
               ),
             ),
-          )
-        ],
+            const SizedBox(height: 10,),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: cartProvider.cartItems.length,
+              itemBuilder: (context, index) {
+                return CartItemWidget(
+                id: cartProvider.cartItems.values.toList()[index].id,
+                price: cartProvider.cartItems.values.toList()[index].price,
+                quantity: cartProvider.cartItems.values.toList()[index].quantity,
+                title: cartProvider.cartItems.values.toList()[index].title
+                );
+              },
+            )
+          ],
+        ),
       ),
     );
   }
