@@ -12,6 +12,11 @@ class CartProvider with ChangeNotifier {
     return _cartItems.values.map((item) => item.price * item.quantity).reduce((value, element) => value + element);
   }
 
+  void removeItem(String productId) {
+    _cartItems.remove(productId);
+    notifyListeners();
+  }
+
   void addCartItem({required String id, required double price, required String title}) {
     if (_cartItems.containsKey(id)) {
     _cartItems.update(id, (value) => CartItemModel(id: value.id, title: value.title, quantity: value.quantity+1, price: value.price));
