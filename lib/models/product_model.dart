@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class ProductModel with ChangeNotifier {
   final String id;
@@ -17,8 +20,18 @@ class ProductModel with ChangeNotifier {
     required this.isFavorite
   });
 
-  void toggleFavoriteStatus() {
+  void toggleFavoriteStatus() async {
+    final bool currentStatus = isFavorite;
     isFavorite = !isFavorite;
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+    try {
+      final response = await http.patch(url, body: jsonEncode({'isFavorite': isFavorite}));
+      if (response.statusCode >= 400) {
+        isFavorite = currentStatus;
+      }
+    } catch (error) {
+      isFavorite = currentStatus;
+    }
     notifyListeners();
   }
 
