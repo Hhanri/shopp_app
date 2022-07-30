@@ -22,9 +22,8 @@ class ProductModel with ChangeNotifier {
     notifyListeners();
   }
 
-  static Map<String, dynamic> toMap(ProductModel product, bool isFav) {
+  static Map<String, dynamic> toMap({required ProductModel product, required bool isFav}) {
     return {
-      'id': product.id,
       'title': product.title,
       'description': product.description,
       'price': product.price,
@@ -33,9 +32,9 @@ class ProductModel with ChangeNotifier {
     };
   }
 
-  factory ProductModel.fromMap(Map<String, dynamic> json) {
+  factory ProductModel.fromMap({required Map<String, dynamic> json, required String id}) {
     return ProductModel(
-      id: json['id'],
+      id: id,
       title: json['title'],
       description: json['description'],
       price: double.parse(json['price']),

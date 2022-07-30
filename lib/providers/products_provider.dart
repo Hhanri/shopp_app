@@ -67,7 +67,7 @@ class ProductsProvider with ChangeNotifier {
     try {
       await http.post(
         _url,
-        body: jsonEncode(ProductModel.toMap(product, true))
+        body: jsonEncode(ProductModel.toMap(product: product, isFav: true))
       );
       _products.add(product);
       notifyListeners();
@@ -81,7 +81,7 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
       http.patch(
-        url, body: ProductModel.toMap(product, false)
+        url, body: ProductModel.toMap(product: product, isFav: false)
       );
       _products[productIndex] = product;
     }
@@ -98,7 +98,7 @@ class ProductsProvider with ChangeNotifier {
     final Map<String, Map<String, dynamic>> body = jsonDecode(response.body);
     List<ProductModel> tempList = [];
     body.forEach((key, value) {
-      tempList.add(ProductModel.fromMap(value));
+      tempList.add(ProductModel.fromMap(json: value, id: key));
     });
     _products = [...tempList];
     notifyListeners();
