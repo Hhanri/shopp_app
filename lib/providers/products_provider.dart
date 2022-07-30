@@ -80,7 +80,7 @@ class ProductsProvider with ChangeNotifier {
     final productIndex = _products.indexWhere((element) => element.id == id);
     if (productIndex >= 0) {
       final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
-      http.patch(
+      await http.patch(
         url, body: ProductModel.toMap(product: product, isFav: false)
       );
       _products[productIndex] = product;
@@ -88,8 +88,14 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteProduct(String id) {
-    _products.removeWhere((element) => element.id == id);
+  Future<void> deleteProduct(String id) async {
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+    final productIndex = _products.indexWhere((element) => element.id == id);
+    final existingProduct = _products[productIndex];
+    http.delete(url).catchError((_) {
+      _products.insert(productIndex, existingProduct);
+    });
+    _products.removeAt(productIndex);
     notifyListeners();
   } 
   
