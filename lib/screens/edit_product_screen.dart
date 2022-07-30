@@ -41,7 +41,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
       setState(() {});
     }
   }
-
   Future<void>  saveForm() async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
@@ -49,10 +48,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
         _isLoading = true;
       });
       if  (editedProduct.id != '') {
-        context.read<ProductsProvider>().updateProduct(id: editedProduct.id, product: editedProduct);
-        setState(() {
-          _isLoading = false;
-        });
+        await context.read<ProductsProvider>().updateProduct(id: editedProduct.id, product: editedProduct);
       } else {
         try {
           await context.read<ProductsProvider>().addProduct(editedProduct);
@@ -67,14 +63,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
               );
             }
           );
-        } finally {
-          setState(() {
-            _isLoading = false;
-          });
-          Navigator.of(context).pop();
         }
       }
     }
+    setState(() {
+      _isLoading = false;
+    });
+    Future.microtask(() => Navigator.of(context).pop());
   }
 
   @override

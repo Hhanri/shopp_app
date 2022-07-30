@@ -67,7 +67,7 @@ class ProductsProvider with ChangeNotifier {
     try {
       await http.post(
         _url,
-        body: jsonEncode(ProductModel.toMap(product))
+        body: jsonEncode(ProductModel.toMap(product, true))
       );
       _products.add(product);
       notifyListeners();
@@ -76,9 +76,13 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void updateProduct({required String id, required ProductModel product}) {
+  Future<void> updateProduct({required String id, required ProductModel product}) async {
     final productIndex = _products.indexWhere((element) => element.id == id);
     if (productIndex >= 0) {
+      final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+      http.patch(
+        url, body: ProductModel.toMap(product, false)
+      );
       _products[productIndex] = product;
     }
     notifyListeners();

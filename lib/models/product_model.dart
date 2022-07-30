@@ -22,14 +22,14 @@ class ProductModel with ChangeNotifier {
     notifyListeners();
   }
 
-  static Map<String, dynamic> toMap(ProductModel product) {
+  static Map<String, dynamic> toMap(ProductModel product, bool isFav) {
     return {
       'id': product.id,
       'title': product.title,
       'description': product.description,
       'price': product.price,
       'imageUrl': product.imageUrl,
-      'isFavorite': product.isFavorite,
+      if(isFav) 'isFavorite': product.isFavorite,
     };
   }
 
