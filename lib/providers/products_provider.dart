@@ -70,6 +70,8 @@ class ProductsProvider with ChangeNotifier {
     ).then((value) {
       _products.add(product);
       notifyListeners();
+    }).catchError((error) {
+      throw error;
     });
   }
 
