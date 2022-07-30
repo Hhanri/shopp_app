@@ -64,15 +64,16 @@ class ProductsProvider with ChangeNotifier {
       imageUrl: newProduct.imageUrl,
       isFavorite: false
     );
-    return http.post(
-      url,
-      body: jsonEncode(ProductModel.toMap(product))
-    ).then((value) {
+    try {
+      await http.post(
+        url,
+        body: jsonEncode(ProductModel.toMap(product))
+      );
       _products.add(product);
       notifyListeners();
-    }).catchError((error) {
-      throw error;
-    });
+    } catch(error) {
+      rethrow;
+    }
   }
 
   void updateProduct({required String id, required ProductModel product}) {
