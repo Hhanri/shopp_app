@@ -22,18 +22,13 @@ class DrawerWidget extends StatelessWidget {
             onTap: () => Navigator.of(context).pushReplacementNamed(ProductsOverviewScreen.routeName),
           ),
           ListTile(
-            leading: const Icon(Icons.shop),
-            title: const Text("Shop"),
-            onTap: () => Navigator.of(context).pushReplacementNamed(ProductsOverviewScreen.routeName),
-          ),
-          ListTile(
             leading: const Icon(Icons.payment),
             title: const Text("Orders"),
             onTap: () => Navigator.of(context).pushReplacementNamed(OrdersScreen.routeName),
           ),
           ListTile(
-            leading: const Icon(Icons.payment),
-            title: const Text("Orders"),
+            leading: const Icon(Icons.production_quantity_limits),
+            title: const Text("Products"),
             onTap: () => Navigator.of(context).pushReplacementNamed(UserProductScreen.routeName),
           )
         ],

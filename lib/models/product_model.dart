@@ -21,4 +21,15 @@ class ProductModel with ChangeNotifier {
     isFavorite = !isFavorite;
     notifyListeners();
   }
+
+  static Map<String, dynamic> toMap(ProductModel product) {
+    return {
+      'id': product.id,
+      'title': product.title,
+      'description': product.description,
+      'price': product.price,
+      'imageUrl': product.imageUrl,
+      'isFavorite': product.isFavorite,
+    };
+  }
 }

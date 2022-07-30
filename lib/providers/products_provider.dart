@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product_model.dart';
+import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
 
@@ -51,7 +54,8 @@ class ProductsProvider with ChangeNotifier {
   }
   ProductModel productById(String id) => _products.firstWhere((element) => element.id == id);
 
-  void addProduct(ProductModel newProduct) {
+  Future<void> addProduct(ProductModel newProduct) async {
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products.json");
     final ProductModel product = ProductModel(
       id: DateTime.now().toString(),
       title: newProduct.title,
@@ -60,8 +64,13 @@ class ProductsProvider with ChangeNotifier {
       imageUrl: newProduct.imageUrl,
       isFavorite: false
     );
-    _products.add(product);
-    notifyListeners();
+    return http.post(
+      url,
+      body: jsonEncode(ProductModel.toMap(product))
+    ).then((value) {
+      _products.add(product);
+      notifyListeners();
+    });
   }
 
   void updateProduct({required String id, required ProductModel product}) {
