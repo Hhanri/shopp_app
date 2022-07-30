@@ -44,6 +44,7 @@ class ProductsProvider with ChangeNotifier {
       isFavorite: false
     ),
   ];
+  final _url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products.json");
 
   List<ProductModel> get products {
     return [..._products];
@@ -55,7 +56,6 @@ class ProductsProvider with ChangeNotifier {
   ProductModel productById(String id) => _products.firstWhere((element) => element.id == id);
 
   Future<void> addProduct(ProductModel newProduct) async {
-    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products.json");
     final ProductModel product = ProductModel(
       id: DateTime.now().toString(),
       title: newProduct.title,
@@ -66,7 +66,7 @@ class ProductsProvider with ChangeNotifier {
     );
     try {
       await http.post(
-        url,
+        _url,
         body: jsonEncode(ProductModel.toMap(product))
       );
       _products.add(product);
@@ -86,6 +86,17 @@ class ProductsProvider with ChangeNotifier {
 
   void deleteProduct(String id) {
     _products.removeWhere((element) => element.id == id);
+    notifyListeners();
+  } 
+  
+  Future<void> fetchProducts() async {
+    final response = await http.get(_url);
+    final Map<String, Map<String, dynamic>> body = jsonDecode(response.body);
+    List<ProductModel> tempList = [];
+    body.forEach((key, value) {
+      tempList.add(ProductModel.fromMap(value));
+    });
+    _products = [...tempList];
     notifyListeners();
   }
 }

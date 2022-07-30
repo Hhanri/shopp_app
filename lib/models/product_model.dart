@@ -32,4 +32,15 @@ class ProductModel with ChangeNotifier {
       'isFavorite': product.isFavorite,
     };
   }
+
+  factory ProductModel.fromMap(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'],
+      title: json['title'],
+      description: json['description'],
+      price: double.parse(json['price']),
+      imageUrl: json['imageUrl'],
+      isFavorite: json['isFavorite']
+    );
+  }
 }
