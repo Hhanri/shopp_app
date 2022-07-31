@@ -14,10 +14,7 @@ class OrdersProvider with ChangeNotifier {
   Future<void> addOrder(List<CartItemModel> products, double total) async {
     final DateTime now = DateTime.now();
     final newOrder = OrderModel(id: now.toString(), amount: total, products: products, date: now);
-    final response = await http.post(_url, body: OrderModel.toMap(newOrder));
     _orders.insert(0, newOrder);
-    final body = jsonDecode(response.body);
-
     notifyListeners();
   }
 
