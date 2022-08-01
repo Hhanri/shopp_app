@@ -35,12 +35,13 @@ class ProductModel with ChangeNotifier {
     notifyListeners();
   }
 
-  static Map<String, dynamic> toMap({required ProductModel product}) {
+  static Map<String, dynamic> toMap({required ProductModel product, required String creatorId}) {
     return {
       'title': product.title,
       'description': product.description,
       'price': product.price,
       'imageUrl': product.imageUrl,
+      'creatorId': creatorId
     };
   }
 

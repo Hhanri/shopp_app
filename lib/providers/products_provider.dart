@@ -35,7 +35,9 @@ class ProductsProvider with ChangeNotifier {
     try {
       await http.post(
         Uri.parse('$productsUrl$token'),
-        body: jsonEncode(ProductModel.toMap(product: product))
+        body: jsonEncode(
+          ProductModel.toMap(product: product, creatorId: userId)
+        )
       );
       _products.add(product);
       notifyListeners();
@@ -49,7 +51,7 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
       await http.patch(
-        url, body: ProductModel.toMap(product: product)
+        url, body: ProductModel.toMap(product: product, creatorId: userId)
       );
       _products[productIndex] = product;
     }
@@ -70,13 +72,15 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   } 
   
-  Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('$productsUrl$token'),);
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    final String filter = filterByUser ? '&orderBy="creatorId"&equalTo="$userId"' : '';
+    final http.Response response = await http.get(Uri.parse('$productsUrl$token$filter'),);
     final Map<String, dynamic>? body = jsonDecode(response.body);
-    final favoriteResponse = await http.get(Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/userFavorite/$userId.json?auth=$token"));
-    final favorites = jsonDecode(favoriteResponse.body);
+    final http.Response favoriteResponse = await http.get(Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/userFavorite/$userId.json?auth=$token"));
+    final Map<String, dynamic>? favorites = jsonDecode(favoriteResponse.body);
     List<ProductModel> tempList = [];
     if (body != null) {
+      print(body);
       body.forEach((key, value) {
         tempList.add(
           ProductModel.fromMap(json: value, id: key, isFav: favorites == null ? false : favorites[key] ?? false)
