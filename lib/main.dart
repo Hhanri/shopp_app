@@ -35,19 +35,24 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => OrdersProvider())
       ],
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: theme,
-        initialRoute: AuthScreen.routeName,
-        routes: {
-          ProductsOverviewScreen.routeName: (context) => const ProductsOverviewScreen(),
-          ProductDetailScreen.routeName: (context) => const ProductDetailScreen(),
-          CartScreen.routeName: (context) => const CartScreen(),
-          OrdersScreen.routeName: (context) => const OrdersScreen(),
-          UserProductScreen.routeName: (context) => const UserProductScreen(),
-          EditProductScreen.routeName: (context) => const EditProductScreen(),
-          AuthScreen.routeName: (context) => const AuthScreen()
-        },
+      child: Consumer<AuthProvider>(
+        builder: (context, auth, child) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: theme,
+            home:  auth.isAuth ? const ProductsOverviewScreen() : const AuthScreen(),
+            //initialRoute: auth.isAuth ? ProductsOverviewScreen.routeName : AuthScreen.routeName,
+            routes: {
+              ProductsOverviewScreen.routeName: (context) => const ProductsOverviewScreen(),
+              ProductDetailScreen.routeName: (context) => const ProductDetailScreen(),
+              CartScreen.routeName: (context) => const CartScreen(),
+              OrdersScreen.routeName: (context) => const OrdersScreen(),
+              UserProductScreen.routeName: (context) => const UserProductScreen(),
+              EditProductScreen.routeName: (context) => const EditProductScreen(),
+              AuthScreen.routeName: (context) => const AuthScreen()
+            },
+          );
+        }
       ),
     );
   }

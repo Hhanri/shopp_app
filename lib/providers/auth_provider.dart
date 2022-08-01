@@ -6,9 +6,19 @@ import 'package:http/http.dart' as http;
 import 'package:shop_app/keys/google_api_keys.dart';
 
 class AuthProvider with ChangeNotifier {
-  late String _token;
-  late DateTime _expiryDate;
-  late String _userId;
+  String? _token;
+  DateTime? _expiryDate;
+  String? _userId;
+
+  bool get isAuth {
+    return token != null;
+  }
+  String? get token {
+    if (_token != null && _expiryDate != null && _expiryDate!.isAfter(DateTime.now())) {
+      return _token!;
+    }
+    return null;
+  }
 
   final String _baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/';
   final String _signUpEndPoint = 'signupNewUser';
@@ -28,6 +38,12 @@ class AuthProvider with ChangeNotifier {
       if (body.containsKey('error')) {
         throw HttpException(body['error']['message']);
       }
+      print(body);
+      _token = body['idToken'];
+      _userId = body['localId'];
+      _expiryDate = DateTime.now().add(Duration(seconds: int.parse(body['expiresIn'])));
+      notifyListeners();
+
     } catch (error) {
       rethrow;
     }
