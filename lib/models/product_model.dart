@@ -50,7 +50,7 @@ class ProductModel with ChangeNotifier {
       id: id,
       title: json['title'],
       description: json['description'],
-      price: double.parse(json['price']),
+      price: json['price'],
       imageUrl: json['imageUrl'],
       isFavorite: json['isFavorite']
     );
