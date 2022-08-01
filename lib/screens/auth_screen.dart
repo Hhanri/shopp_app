@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -99,20 +100,52 @@ class AuthCardState extends State<AuthCard> {
   var _isLoading = false;
   final _passwordController = TextEditingController();
 
+  void _showErrorDialog(String message) {
+    showDialog(context: context, builder: (context) {
+      return AlertDialog(
+        title: const Text("An Error Occurred"),
+        content: Text(message),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("OK"))
+        ],
+      );
+    });
+  }
+
   void _submit() async {
     if (!_formKey.currentState!.validate()) {
-      // Invalid!
       return;
     }
     _formKey.currentState!.save();
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.logIn) {
-      await context.read<AuthProvider>().signIn(_authData['email']!, _authData['password']!);
-    } else {
-      await context.read<AuthProvider>().signUp(_authData['email']!, _authData['password']!);
+
+    try {
+      if (_authMode == AuthMode.logIn) {
+        await context.read<AuthProvider>().signIn(_authData['email']!, _authData['password']!);
+      } else {
+        await context.read<AuthProvider>().signUp(_authData['email']!, _authData['password']!);
+      }
+    } on HttpException catch(error) {
+      String errorMessage = "Authentication Failed";
+      if (error.toString().contains('EMAIL_EXISTS')) {
+        errorMessage = "This email already exists";
+      } else if (error.toString().contains('INVALID_EMAIL')) {
+        errorMessage = 'This is not a valid email';
+      } else if (error.toString().contains('WEAK_PASSWORD')) {
+        errorMessage = 'This password is too weak';
+      } else if (errorMessage.toString().contains('EMAIL_NOT_FOUND')) {
+        errorMessage = 'Could not find a user with this email';
+      } else if (errorMessage.toString().contains('INVALID_PASSWORD ')) {
+        errorMessage = 'Invalid password';
+      }
+      _showErrorDialog(errorMessage);
+    } catch(error) {
+      const errorMessage = 'Could not authenticate. Please try again later';
+      _showErrorDialog(errorMessage);
     }
+
     setState(() {
       _isLoading = false;
     });

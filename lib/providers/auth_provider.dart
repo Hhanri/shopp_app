@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -13,17 +14,23 @@ class AuthProvider with ChangeNotifier {
   final String _signUpEndPoint = 'signupNewUser';
   final String _signInEndPoint = 'verifyPassword';
   Future<void> _authenticate({required String email, required String password, required String urlSegment}) async {
-    final url =
-    Uri.parse('$_baseUrl$urlSegment$googleApiKey');
-    final response = await http.post(
-      url,
-      body: json.encode({
-        'email': email,
-        'password': password,
-        'returnSecureToken': true,
-      },),
-    );
-    print(json.decode(response.body));
+    try {
+      final url = Uri.parse('$_baseUrl$urlSegment$googleApiKey');
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'email': email,
+          'password': password,
+          'returnSecureToken': true,
+        },),
+      );
+      final Map<String, dynamic> body = jsonDecode(response.body);
+      if (body.containsKey('error')) {
+        throw HttpException(body['error']['message']);
+      }
+    } catch (error) {
+      rethrow;
+    }
   }
 
   Future<void> signUp(String email, String password) async {
