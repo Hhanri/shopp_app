@@ -233,7 +233,6 @@ class AuthCardState extends State<AuthCard> {
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
                       padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                      primary: Theme.of(context).primaryColor,
                       textStyle: TextStyle(
                         color: Theme.of(context).primaryTextTheme.button!.color,
                       ),
