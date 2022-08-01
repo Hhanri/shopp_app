@@ -9,7 +9,10 @@ class CartProvider with ChangeNotifier {
   int get itemCount => _cartItems.length;
 
   double get totalAmount {
-    return _cartItems.values.map((item) => item.price * item.quantity).reduce((value, element) => value + element);
+    if (_cartItems.isNotEmpty) {
+      return _cartItems.values.map((item) => item.price * item.quantity).reduce((value, element) => value + element);
+    }
+    return 0.00;
   }
 
   void removeItem(String productId) {
@@ -40,6 +43,7 @@ class CartProvider with ChangeNotifier {
 
   void clearCart() {
     _cartItems = {};
+    notifyListeners();
   }
 }
 
