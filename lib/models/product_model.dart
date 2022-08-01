@@ -20,12 +20,12 @@ class ProductModel with ChangeNotifier {
     required this.isFavorite
   });
 
-  void toggleFavoriteStatus(String token) async {
+  void toggleFavoriteStatus({required String token, required String userId}) async {
     final bool currentStatus = isFavorite;
     isFavorite = !isFavorite;
-    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/userFavorite/$userId/$id.json?auth=$token");
     try {
-      final response = await http.patch(url, body: jsonEncode({'isFavorite': isFavorite}));
+      final response = await http.put(url, body: jsonEncode(isFavorite));
       if (response.statusCode >= 400) {
         isFavorite = currentStatus;
       }
@@ -35,24 +35,23 @@ class ProductModel with ChangeNotifier {
     notifyListeners();
   }
 
-  static Map<String, dynamic> toMap({required ProductModel product, required bool isFav}) {
+  static Map<String, dynamic> toMap({required ProductModel product}) {
     return {
       'title': product.title,
       'description': product.description,
       'price': product.price,
       'imageUrl': product.imageUrl,
-      if(isFav) 'isFavorite': product.isFavorite,
     };
   }
 
-  factory ProductModel.fromMap({required Map<String, dynamic> json, required String id}) {
+  factory ProductModel.fromMap({required Map<String, dynamic> json, required String id, required bool isFav}) {
     return ProductModel(
       id: id,
       title: json['title'],
       description: json['description'],
       price: json['price'],
       imageUrl: json['imageUrl'],
-      isFavorite: json['isFavorite']
+      isFavorite: isFav
     );
   }
 }

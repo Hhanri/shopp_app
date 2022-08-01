@@ -33,7 +33,7 @@ class ProductItemWidget extends StatelessWidget {
           title: Text(product.title),
           backgroundColor: Colors.black87,
           leading: IconButton(
-            onPressed: () => product.toggleFavoriteStatus(context.read<AuthProvider>().token!),
+            onPressed: () => product.toggleFavoriteStatus(token: context.read<AuthProvider>().token!, userId: context.read<AuthProvider>().userId!),
             color: Theme.of(context).colorScheme.secondary,
             icon: Consumer<ProductModel>(
               builder: (context, product, child) {

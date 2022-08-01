@@ -7,13 +7,12 @@ import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
   final String token;
+  final String userId;
   List<ProductModel> _products = [];
 
-  ProductsProvider(this.token, this._products);
+  ProductsProvider(this.token, this.userId, this._products);
 
-
-
-  String baseUrl = "https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=";
+  String productsUrl = "https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products.json?auth=";
 
   List<ProductModel> get products {
     return [..._products];
@@ -35,8 +34,8 @@ class ProductsProvider with ChangeNotifier {
     );
     try {
       await http.post(
-        Uri.parse('$baseUrl$token'),
-        body: jsonEncode(ProductModel.toMap(product: product, isFav: true))
+        Uri.parse('$productsUrl$token'),
+        body: jsonEncode(ProductModel.toMap(product: product))
       );
       _products.add(product);
       notifyListeners();
@@ -50,7 +49,7 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
       await http.patch(
-        url, body: ProductModel.toMap(product: product, isFav: false)
+        url, body: ProductModel.toMap(product: product)
       );
       _products[productIndex] = product;
     }
@@ -72,12 +71,18 @@ class ProductsProvider with ChangeNotifier {
   } 
   
   Future<void> fetchProducts() async {
-    final response = await http.get(Uri.parse('$baseUrl$token'),);
-    final Map<String, dynamic> body = jsonDecode(response.body);
+    final response = await http.get(Uri.parse('$productsUrl$token'),);
+    final Map<String, dynamic>? body = jsonDecode(response.body);
+    final favoriteResponse = await http.get(Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/userFavorite/$userId.json?auth=$token"));
+    final favorites = jsonDecode(favoriteResponse.body);
     List<ProductModel> tempList = [];
-    body.forEach((key, value) {
-      tempList.add(ProductModel.fromMap(json: value, id: key));
-    });
+    if (body != null) {
+      body.forEach((key, value) {
+        tempList.add(
+          ProductModel.fromMap(json: value, id: key, isFav: favorites == null ? false : favorites[key] ?? false)
+        );
+      });
+    }
     _products = [...tempList];
     notifyListeners();
   }

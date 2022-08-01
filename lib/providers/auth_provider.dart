@@ -20,6 +20,8 @@ class AuthProvider with ChangeNotifier {
     return null;
   }
 
+  String? get userId => _userId;
+
   final String _baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/';
   final String _signUpEndPoint = 'signupNewUser';
   final String _signInEndPoint = 'verifyPassword';
