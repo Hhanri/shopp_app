@@ -20,10 +20,10 @@ class ProductModel with ChangeNotifier {
     required this.isFavorite
   });
 
-  void toggleFavoriteStatus() async {
+  void toggleFavoriteStatus(String token) async {
     final bool currentStatus = isFavorite;
     isFavorite = !isFavorite;
-    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
     try {
       final response = await http.patch(url, body: jsonEncode({'isFavorite': isFavorite}));
       if (response.statusCode >= 400) {

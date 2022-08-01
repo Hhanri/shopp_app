@@ -6,10 +6,13 @@ import 'package:shop_app/models/order_model.dart';
 import 'package:http/http.dart' as http;
 
 class OrdersProvider with ChangeNotifier {
+  final String token;
   List<OrderModel> _orders = [];
 
+  OrdersProvider(this.token, this._orders);
+
   List<OrderModel> get orders => [..._orders];
-  final _url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/orders.json");
+  final String _url = "https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/orders.json?auth=";
 
   Future<void> addOrder(List<CartItemModel> products, double total) async {
     final DateTime now = DateTime.now();
@@ -19,7 +22,7 @@ class OrdersProvider with ChangeNotifier {
   }
 
   Future<void> fetchOrders() async {
-    final response = await http.get(_url);
+    final response = await http.get(Uri.parse("$_url$token"));
     final Map<String, Map<String, dynamic>> body = jsonDecode(response.body);
     List<OrderModel> orders = [];
     body.forEach((key, value) {

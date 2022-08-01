@@ -48,7 +48,7 @@ class ProductsProvider with ChangeNotifier {
   Future<void> updateProduct({required String id, required ProductModel product}) async {
     final productIndex = _products.indexWhere((element) => element.id == id);
     if (productIndex >= 0) {
-      final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+      final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
       await http.patch(
         url, body: ProductModel.toMap(product: product, isFav: false)
       );
@@ -58,7 +58,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json");
+    final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
     final productIndex = _products.indexWhere((element) => element.id == id);
     final existingProduct = _products[productIndex];
     _products.removeAt(productIndex);
@@ -74,7 +74,6 @@ class ProductsProvider with ChangeNotifier {
   Future<void> fetchProducts() async {
     final response = await http.get(Uri.parse('$baseUrl$token'),);
     final Map<String, dynamic> body = jsonDecode(response.body);
-    print(body);
     List<ProductModel> tempList = [];
     body.forEach((key, value) {
       tempList.add(ProductModel.fromMap(json: value, id: key));

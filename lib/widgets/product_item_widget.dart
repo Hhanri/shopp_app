@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/product_model.dart';
+import 'package:shop_app/providers/auth_provider.dart';
 import 'package:shop_app/providers/cart_provider.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ class ProductItemWidget extends StatelessWidget {
           title: Text(product.title),
           backgroundColor: Colors.black87,
           leading: IconButton(
-            onPressed: () => product.toggleFavoriteStatus(),
+            onPressed: () => product.toggleFavoriteStatus(context.read<AuthProvider>().token!),
             color: Theme.of(context).colorScheme.secondary,
             icon: Consumer<ProductModel>(
               builder: (context, product, child) {
