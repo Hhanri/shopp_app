@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,6 +10,7 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   DateTime? _expiryDate;
   String? _userId;
+  Timer? _timer;
 
   bool get isAuth {
     return token != null;
@@ -25,6 +27,7 @@ class AuthProvider with ChangeNotifier {
   final String _baseUrl = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/';
   final String _signUpEndPoint = 'signupNewUser';
   final String _signInEndPoint = 'verifyPassword';
+
   Future<void> _authenticate({required String email, required String password, required String urlSegment}) async {
     try {
       final url = Uri.parse('$_baseUrl$urlSegment$googleApiKey');
@@ -44,8 +47,8 @@ class AuthProvider with ChangeNotifier {
       _token = body['idToken'];
       _userId = body['localId'];
       _expiryDate = DateTime.now().add(Duration(seconds: int.parse(body['expiresIn'])));
+      _autoSignOut();
       notifyListeners();
-
     } catch (error) {
       rethrow;
     }
@@ -57,5 +60,26 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signIn(String email, String password) async {
     return _authenticate(email: email, password: password, urlSegment: _signInEndPoint);
+  }
+
+  void signOut() {
+    _token = null;
+    _userId = null;
+    _expiryDate = null;
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    notifyListeners();
+  }
+
+  void _autoSignOut() {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    final timeToExpiry = _expiryDate!.difference(DateTime.now()).inSeconds;
+    _timer = Timer(
+      Duration(seconds: timeToExpiry),
+      () => signOut()
+    );
   }
 }

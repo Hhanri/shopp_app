@@ -6,8 +6,8 @@ import 'package:shop_app/models/product_model.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-  final String token;
-  final String userId;
+  final String? token;
+  final String? userId;
   List<ProductModel> _products = [];
 
   ProductsProvider(this.token, this.userId, this._products);
@@ -36,7 +36,7 @@ class ProductsProvider with ChangeNotifier {
       await http.post(
         Uri.parse('$productsUrl$token'),
         body: jsonEncode(
-          ProductModel.toMap(product: product, creatorId: userId)
+          ProductModel.toMap(product: product, creatorId: userId!)
         )
       );
       _products.add(product);
@@ -51,7 +51,7 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       final url = Uri.parse("https://shop-app-e09ab-default-rtdb.europe-west1.firebasedatabase.app/products/$id.json?auth=$token");
       await http.patch(
-        url, body: ProductModel.toMap(product: product, creatorId: userId)
+        url, body: ProductModel.toMap(product: product, creatorId: userId!)
       );
       _products[productIndex] = product;
     }

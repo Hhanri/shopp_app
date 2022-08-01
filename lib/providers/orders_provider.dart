@@ -6,8 +6,8 @@ import 'package:shop_app/models/order_model.dart';
 import 'package:http/http.dart' as http;
 
 class OrdersProvider with ChangeNotifier {
-  final String token;
-  final String userId;
+  final String? token;
+  final String? userId;
   List<OrderModel> _orders = [];
 
   OrdersProvider(this.token, this.userId, this._orders);
