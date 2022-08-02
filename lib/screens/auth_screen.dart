@@ -90,7 +90,7 @@ class AuthCard extends StatefulWidget {
   AuthCardState createState() => AuthCardState();
 }
 
-class AuthCardState extends State<AuthCard> {
+class AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.logIn;
   Map<String, String> _authData = {
@@ -99,6 +99,24 @@ class AuthCardState extends State<AuthCard> {
   };
   var _isLoading = false;
   final _passwordController = TextEditingController();
+
+
+  late AnimationController _animationController;
+  late Animation<Size> _heightAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 300));
+    _heightAnimation = Tween<Size>(begin: const Size(double.infinity, 260), end: const Size(double.infinity, 320)).animate(CurvedAnimation(parent: _animationController, curve: Curves.bounceIn));
+    _animationController.addListener(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   void _showErrorDialog(String message) {
     showDialog(context: context, builder: (context) {
@@ -156,10 +174,12 @@ class AuthCardState extends State<AuthCard> {
       setState(() {
         _authMode = AuthMode.signUp;
       });
+      _animationController.forward();
     } else {
       setState(() {
         _authMode = AuthMode.logIn;
       });
+      _animationController.reverse();
     }
   }
 
@@ -172,7 +192,7 @@ class AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.signUp ? 320 : 260,
+        height: _heightAnimation.value.height, //_authMode == AuthMode.signUp ? 320 : 260,
         constraints:
             BoxConstraints(minHeight: _authMode == AuthMode.signUp ? 320 : 260),
         width: deviceSize.width * 0.75,
