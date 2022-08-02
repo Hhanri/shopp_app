@@ -13,34 +13,41 @@ class ProductDetailScreen extends StatelessWidget {
     final product = context.read<ProductsProvider>().productById(id);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(product.title),
-      ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: Hero(tag: product.id, child: Image.network(product.imageUrl, fit: BoxFit.cover,)),
-          ),
-          const SizedBox(height: 10,),
-          Text(
-            '\$${product.price}',
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 20
+      /*appBar: AppBar(
+        title:
+      ),*/
+      body: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            expandedHeight: 300,
+            pinned: true,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(product.title),
+              background: Hero(tag: product.id, child: Image.network(product.imageUrl, fit: BoxFit.cover,)),
             ),
           ),
-          const SizedBox(height: 10,),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            width: double.infinity,
-            child: Text(
-              product.description,
-              textAlign: TextAlign.center,
-              softWrap: true,
-            ),
-          )
+          SliverList(delegate: SliverChildListDelegate(
+            [
+              Text(
+                '\$${product.price}',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20
+                ),
+              ),
+              const SizedBox(height: 10,),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                width: double.infinity,
+                child: Text(
+                  product.description,
+                  textAlign: TextAlign.center,
+                  softWrap: true,
+                ),
+              )
+            ]
+          ))
         ],
       ),
     );
