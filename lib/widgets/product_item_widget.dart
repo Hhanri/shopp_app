@@ -49,10 +49,13 @@ class ProductItemWidget extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () => Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: product.id),
-          child: FadeInImage(
-            placeholder: const AssetImage('assets/images/product-placeholder.png'),
-            image: NetworkImage(product.imageUrl),
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: const AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+              fit: BoxFit.cover,
+            ),
           )
         ),
       ),
