@@ -10,6 +10,7 @@ import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/orders_screen.dart';
 import 'package:shop_app/screens/product_detail_screen.dart';
 import 'package:shop_app/screens/products_overview_screen.dart';
+import 'package:shop_app/screens/splash_screen.dart';
 import 'package:shop_app/screens/user_product_screen.dart';
 
 void main() {
@@ -46,8 +47,17 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'Flutter Demo',
             theme: theme,
-            home:  auth.isAuth ? const ProductsOverviewScreen() : const AuthScreen(),
-            //initialRoute: auth.isAuth ? ProductsOverviewScreen.routeName : AuthScreen.routeName,
+            home:  auth.isAuth
+              ? const ProductsOverviewScreen()
+              : FutureBuilder(
+                  future: context.read<AuthProvider>().tryAutoSignIn(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SplashScreen();
+                    }
+                    return const AuthScreen();
+                  },
+                ),
             routes: {
               ProductsOverviewScreen.routeName: (context) => const ProductsOverviewScreen(),
               ProductDetailScreen.routeName: (context) => const ProductDetailScreen(),

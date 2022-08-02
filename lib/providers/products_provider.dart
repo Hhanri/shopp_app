@@ -88,6 +88,8 @@ class ProductsProvider with ChangeNotifier {
       });
     }
     _products = [...tempList];
-    notifyListeners();
+    if (hasListeners) {
+      notifyListeners();
+    }
   }
 }
